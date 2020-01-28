@@ -96,12 +96,12 @@ public:
             if (!bCheck4GM)
                strcpy_s(DataTypeTemp,"DISABLED");
             Dest.Ptr=DataTypeTemp;
-            Dest.Type=pStringType;
+            Dest.Type=mq::datatypes::pStringType;
             return true;
          case Count:
             sprintf_s(DataTypeTemp,"%d",NumGMOnList());
             Dest.Ptr=DataTypeTemp;
-            Dest.Type=pStringType;
+            Dest.Type=mq::datatypes::pStringType;
             return true;
       }
       return false;

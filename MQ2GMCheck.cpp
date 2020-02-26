@@ -27,18 +27,19 @@
 // just came into the zone and were not gm-invised at the time. If a GM comes
 // into the zone already gm-invised, we will not know about that.
 
-#include "../MQ2Plugin.h"
-PreSetup("MQ2GMCheck");
-#include "time.h"
-#include "math.h"
+#include <mq/Plugin.h>
 #include "mmsystem.h"
-//#pragma comment(lib, "winmm.lib")
 
-#define GMLIMIT 10
+#include <ctime>
+
+PreSetup("MQ2GMCheck");
+
+constexpr auto GMLIMIT = 10;
+
 struct GMCHECK {
    char Name[MAX_STRING];
    int ID;
-   ULONGLONG Timer;
+   unsigned long long Timer;
 };
 GMCHECK GMSpawns[GMLIMIT];
 
@@ -51,11 +52,12 @@ bool bAlertAudio=true;
 unsigned int gAlertPopupDelay=30000;
 unsigned int gAlertChatDelay=15000;
 unsigned int gAlertAudioDelay=30000;
-ULONGLONG gAlertPopupTimer=0;
-ULONGLONG gAlertChatTimer=0;
-ULONGLONG gAlertAudioTimer=0;
-ULONGLONG gPulseTimer=0;
+unsigned long long gAlertPopupTimer=0;
+unsigned long long gAlertChatTimer=0;
+unsigned long long gAlertAudioTimer=0;
+unsigned long long gPulseTimer=0;
 unsigned int gPulseDelay=2000;
+
 char GMSound[MAX_STRING]; // GM Sound File
 
 int NumGMOnList();
@@ -80,9 +82,9 @@ public:
    {
    }
 
-   bool GetMember(MQ2VARPTR VarPtr, PCHAR Member, PCHAR Index, MQ2TYPEVAR &Dest)
+   bool GetMember(MQVarPtr VarPtr, PCHAR Member, PCHAR Index, MQTypeVar &Dest)
    {
-      PMQ2TYPEMEMBER pMember=MQ2GMCheckType::FindMember(Member);
+      MQTypeMember* pMember=MQ2GMCheckType::FindMember(Member);
       if (!pMember)
          return false;
       switch((GMCheckMembers)pMember->ID)
@@ -94,18 +96,18 @@ public:
             if (!bCheck4GM)
                strcpy_s(DataTypeTemp,"DISABLED");
             Dest.Ptr=DataTypeTemp;
-            Dest.Type=pStringType;
+            Dest.Type=mq::datatypes::pStringType;
             return true;
          case Count:
             sprintf_s(DataTypeTemp,"%d",NumGMOnList());
             Dest.Ptr=DataTypeTemp;
-            Dest.Type=pStringType;
+            Dest.Type=mq::datatypes::pStringType;
             return true;
       }
       return false;
    }
 
-   bool ToString(MQ2VARPTR VarPtr, PCHAR Destination)
+   bool ToString(MQVarPtr VarPtr, PCHAR Destination)
    {
       strcpy_s(Destination,MAX_STRING, "FALSE");
       if (bGMInTheZone)
@@ -115,17 +117,17 @@ public:
       return true;
    }
 
-   bool FromData(MQ2VARPTR &VarPtr, MQ2TYPEVAR &Source)
+   bool FromData(MQVarPtr &VarPtr, MQTypeVar &Source)
    {
       return false;
    }
-   bool FromString(MQ2VARPTR &VarPtr, PCHAR Source)
+   bool FromString(MQVarPtr &VarPtr, PCHAR Source)
    {
       return false;
    }
 };
 
-BOOL dataGMCheck(PCHAR szName, MQ2TYPEVAR &Ret)
+bool dataGMCheck(const char* szName, MQTypeVar &Ret)
 {
    Ret.DWord=1;
    Ret.Type=pGMCheckType;
@@ -135,7 +137,7 @@ BOOL dataGMCheck(PCHAR szName, MQ2TYPEVAR &Ret)
 bool G_PluginLoaded(PCHAR szPlugin)
 {
    // Check for plugins
-   PMQPLUGIN pPlugin=pPlugins;
+   MQPlugin* pPlugin=pPlugins;
    while(pPlugin)
    {
       if (!_stricmp(pPlugin->szFilename,szPlugin)) return true;
@@ -154,7 +156,7 @@ void TrackGMs(PCHAR GMName)
    errno_t err;
 
    time_t rawtime;
-   struct tm timeinfo;
+   struct tm timeinfo = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
    time(&rawtime);
    err = localtime_s(&timeinfo, &rawtime);
    //strncpy(szTime,asctime(timeinfo),24);
@@ -220,7 +222,7 @@ void AddGMToList(int GMID,PCHAR GMName)
          if (GMSpawns[x].ID==0) {
             GMSpawns[x].ID=GMID;
             strcpy_s(GMSpawns[x].Name,GMName);
-            GMSpawns[x].Timer=GetTickCount642();
+            GMSpawns[x].Timer=GetTickCount64();
             TrackGMs(GMName);
             break;
          }
@@ -236,7 +238,7 @@ void RemoveGMFromList(int GMID)
    for (int x=0;x<GMLIMIT;x++)
       if (GMSpawns[x].ID==GMID) {
          ULONGLONG c,h,m,s,t;
-         c=GetTickCount642();
+         c=GetTickCount64();
          t=(c-GMSpawns[x].Timer)/1000;
          h=m=s=0;
          if (t>3600) h=(t/3600);
@@ -315,7 +317,7 @@ void HistoryGMAllServers()
         pKeys+=strlen(pKeys)+1;
     }
    if (!count) WriteChatf("\arNo GM's seen yet!\ax");
-   return;   
+   return;
 }
 
 void HistoryGMThisServer()
@@ -346,7 +348,7 @@ void HistoryGMThisServer()
         pKeys+=strlen(pKeys)+1;
     }
    if (!count) WriteChatf("\arNo GM's seen on this server!\ax");
-   return;   
+   return;
 }
 
 void HistoryGMThisZone()
@@ -377,7 +379,7 @@ void HistoryGMThisZone()
         pKeys+=strlen(pKeys)+1;
     }
    if (!count) WriteChatf("\arNo GM's seen in this zone!\ax");
-   return;   
+   return;
 }
 
 void HistoryGMs()
@@ -385,7 +387,7 @@ void HistoryGMs()
    HistoryGMAllServers();
    HistoryGMThisServer();
    HistoryGMThisZone();
-   return;   
+   return;
 }
 
 void ListGMs()
@@ -396,7 +398,7 @@ void ListGMs()
    for (int x=0;x<GMLIMIT;x++)
       if (GMSpawns[x].ID!=0) {
          ULONGLONG c,h,m,s,t;
-         c=GetTickCount642();
+         c=GetTickCount64();
          t=(c-GMSpawns[x].Timer)/1000;
          h=m=s=0;
          if (t>3600) h=(t/3600);
@@ -407,20 +409,20 @@ void ListGMs()
          s=t;
          sprintf_s(szTemp,"GMCHECK: GM FOUND: %s (%d) - %lluh:%llum:%llus", GMSpawns[x].Name, GMSpawns[x].ID,h,m,s);
          sprintf_s(szOutput,"\ar%s\ax",szTemp);
-         if (bAlertChat) if (gAlertChatTimer<=GetTickCount642()) WriteChatf(szOutput);
+         if (bAlertChat) if (gAlertChatTimer<=GetTickCount64()) WriteChatf(szOutput);
          sprintf_s(szOutput,"/popup %s",szTemp);
-         if (bAlertPopup) if (gAlertPopupTimer<=GetTickCount642()) DoCommand((PSPAWNINFO)pCharSpawn,szOutput);
+         if (bAlertPopup) if (gAlertPopupTimer<=GetTickCount64()) DoCommand((PSPAWNINFO)pCharSpawn,szOutput);
          bShown = true;
       }
    if (bShown) {
-      if (bAlertAudio) if (gAlertAudioTimer<=GetTickCount642()) PlaySound(GMSound,0,SND_ASYNC);
+      if (bAlertAudio) if (gAlertAudioTimer<=GetTickCount64()) PlaySound(GMSound,0,SND_ASYNC);
    } else {
       if (bAlertChat) WriteChatf("\arGMCHECK: No known GM's in this zone at this time!\ax");
       if (bAlertPopup) DoCommand((PSPAWNINFO)pCharSpawn,"/popup GMCHECK: No known GM's in this zone at this time!");
    }
-   if (bAlertChat) if (gAlertChatTimer<=GetTickCount642()) gAlertChatTimer=GetTickCount642()+gAlertChatDelay;
-   if (bAlertPopup) if (gAlertPopupTimer<=GetTickCount642()) gAlertPopupTimer=GetTickCount642()+gAlertPopupDelay;
-   if (bAlertAudio) if (gAlertAudioTimer<=GetTickCount642()) gAlertAudioTimer=GetTickCount642()+gAlertAudioDelay;
+   if (bAlertChat) if (gAlertChatTimer<=GetTickCount64()) gAlertChatTimer=GetTickCount64()+gAlertChatDelay;
+   if (bAlertPopup) if (gAlertPopupTimer<=GetTickCount64()) gAlertPopupTimer=GetTickCount64()+gAlertPopupDelay;
+   if (bAlertAudio) if (gAlertAudioTimer<=GetTickCount64()) gAlertAudioTimer=GetTickCount64()+gAlertAudioDelay;
    return;
 }
 
@@ -561,13 +563,13 @@ void Switches(PSPAWNINFO pChar, PCHAR szLine)
          WriteChatf("\arGMCHECK: Audio alerting disabled!");
       return;
    }
-  // Test audio alert 
+  // Test audio alert
    if (!_strnicmp(szArg1,"TESTAUDIO",9)) {
         WriteChatf("\arGMCHECK: Testing Audio Alert!");
         PlaySound(GMSound,0,SND_ASYNC);
       return;
    }
-   
+
    // Turning popup spam alert on/off
    if (!_strnicmp(szArg1,"POPUP",5)) {
       bAlertPopup=!bAlertPopup;
@@ -602,7 +604,7 @@ PLUGIN_API VOID InitializePlugin(VOID)
    DebugSpewAlways("Initializing MQ2GMCheck");
    AddCommand("/gmcheck",Switches);
    pGMCheckType = new MQ2GMCheckType;
-   AddMQ2Data("GMCheck",dataGMCheck);
+   AddMQ2Data("GMCheck", dataGMCheck);
    ResetGMArray();
    WriteChatColor("MQ2GMCheck 2.1 - Check/Alert/History of GM's",USERCOLOR_DEFAULT);
    return;
@@ -664,8 +666,8 @@ PLUGIN_API VOID OnPulse(VOID)
    if (gGameState!=GAMESTATE_INGAME) return;
 
    // Scan for GMs once every gPulseDelay seconds (1000=1s, 2000=2s, etc.)
-   if (gPulseTimer>GetTickCount642()) return;
-   gPulseTimer=GetTickCount642()+gPulseDelay;
+   if (gPulseTimer>GetTickCount64()) return;
+   gPulseTimer=GetTickCount64()+gPulseDelay;
    ScanGMs();
    if (bGMInTheZone) ListGMs();
    return;

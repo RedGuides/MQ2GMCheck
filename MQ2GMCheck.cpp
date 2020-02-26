@@ -39,7 +39,7 @@ constexpr auto GMLIMIT = 10;
 struct GMCHECK {
    char Name[MAX_STRING];
    int ID;
-   unsigned long long Timer;
+   uint64_t Timer;
 };
 GMCHECK GMSpawns[GMLIMIT];
 
@@ -52,10 +52,10 @@ bool bAlertAudio=true;
 unsigned int gAlertPopupDelay=30000;
 unsigned int gAlertChatDelay=15000;
 unsigned int gAlertAudioDelay=30000;
-unsigned long long gAlertPopupTimer=0;
-unsigned long long gAlertChatTimer=0;
-unsigned long long gAlertAudioTimer=0;
-unsigned long long gPulseTimer=0;
+uint64_t gAlertPopupTimer=0;
+uint64_t gAlertChatTimer=0;
+uint64_t gAlertAudioTimer=0;
+uint64_t gPulseTimer=0;
 unsigned int gPulseDelay=2000;
 
 char GMSound[MAX_STRING]; // GM Sound File

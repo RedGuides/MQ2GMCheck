@@ -33,6 +33,7 @@
 #include <ctime>
 
 PreSetup("MQ2GMCheck");
+PLUGIN_VERSION(2.2);
 
 constexpr auto GMLIMIT = 10;
 

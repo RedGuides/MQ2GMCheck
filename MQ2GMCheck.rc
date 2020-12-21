@@ -75,7 +75,6 @@ BEGIN
 #endif
             VALUE "FileVersion", "2.2"
             VALUE "InternalName", "MQ2GMCheck.dll"
-            VALUE "LegalCopyright", "Licensed under the GNU GPL v2"
             VALUE "OriginalFilename", "MQ2GMCheck.dll"
             VALUE "ProductName", "MQ2GMCheck"
             VALUE "ProductVersion", "2.2"

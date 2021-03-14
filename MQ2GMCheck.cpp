@@ -79,10 +79,6 @@ public:
       TypeMember(Count);
    }
 
-   ~MQ2GMCheckType()
-   {
-   }
-
    virtual bool GetMember(MQVarPtr VarPtr, const char* Member, char* Index, MQTypeVar &Dest) override
    {
       MQTypeMember* pMember=MQ2GMCheckType::FindMember(Member);
@@ -108,7 +104,7 @@ public:
       return false;
    }
 
-   bool ToString(MQVarPtr VarPtr, PCHAR Destination)
+   virtual bool ToString(MQVarPtr VarPtr, PCHAR Destination) override
    {
       strcpy_s(Destination,MAX_STRING, "FALSE");
       if (bGMInTheZone)
@@ -116,15 +112,6 @@ public:
       if (!bCheck4GM)
          strcpy_s(Destination, MAX_STRING, "DISABLED");
       return true;
-   }
-
-   bool FromData(MQVarPtr &VarPtr, MQTypeVar &Source)
-   {
-      return false;
-   }
-   virtual bool FromString(MQVarPtr &VarPtr, const char* Source) override
-   {
-      return false;
    }
 };
 
@@ -185,7 +172,7 @@ void TrackGMs(PCHAR GMName)
    sprintf_s(szTemp,"%d,%s",iCount,szTime);
    WritePrivateProfileString(szSection,szLookup,szTemp,INIFileName);
 
-   return;   
+   return;
 }
 
 void ResetGMArray()

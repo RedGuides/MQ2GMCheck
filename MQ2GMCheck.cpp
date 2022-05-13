@@ -152,7 +152,7 @@ void TrackGMs(PCHAR GMName)
 
 
    // Store GM count by Server-Zone
-   sprintf_s(szSection,"%s-%s",EQADDR_SERVERNAME,((PZONEINFO)pZoneInfo)->LongName);
+   sprintf_s(szSection,"%s-%s", GetServerShortName(), pZoneInfo->LongName);
    sprintf_s(szLookup,"%s",GMName);
    iCount = GetPrivateProfileInt(szSection,szLookup,0,INIFileName) + 1;
    sprintf_s(szTemp,"%d,%s",iCount,szTime);
@@ -162,11 +162,11 @@ void TrackGMs(PCHAR GMName)
    strcpy_s(szSection,"GM");
    sprintf_s(szLookup,"%s",GMName);
    iCount = GetPrivateProfileInt(szSection,szLookup,0,INIFileName) + 1;
-   sprintf_s(szTemp,"%d,%s,%s",iCount,EQADDR_SERVERNAME,szTime);
+   sprintf_s(szTemp,"%d,%s,%s",iCount, GetServerShortName(),szTime);
    WritePrivateProfileString(szSection,szLookup,szTemp,INIFileName);
 
    // Store GM count by Server
-   sprintf_s(szSection,"%s",EQADDR_SERVERNAME);
+   sprintf_s(szSection,"%s", GetServerShortName());
    sprintf_s(szLookup,"%s",GMName);
    iCount = GetPrivateProfileInt(szSection,szLookup,0,INIFileName) + 1;
    sprintf_s(szTemp,"%d,%s",iCount,szTime);
@@ -320,7 +320,7 @@ void HistoryGMThisServer()
 
    // What GM's have been seen on this server?
    WriteChatf("\arGMCHECK: History of GM's on this server\ax");
-   sprintf_s(szSection,"%s",EQADDR_SERVERNAME);
+   sprintf_s(szSection,"%s", GetServerShortName());
    GetPrivateProfileString(szSection,NULL,"",szKeys,MAX_STRING*25,INIFileName);
     PCHAR pKeys = szKeys;
     while (pKeys[0]!=0) {
@@ -351,7 +351,7 @@ void HistoryGMThisZone()
 
    // What GM's have been seen on this server in this zone?
    WriteChatf("\arGMCHECK: History of GM's in this zone on this server\ax");
-   sprintf_s(szSection,"%s-%s",EQADDR_SERVERNAME,((PZONEINFO)pZoneInfo)->LongName);
+   sprintf_s(szSection,"%s-%s", GetServerShortName(), pZoneInfo->LongName);
    GetPrivateProfileString(szSection,NULL,"",szKeys,MAX_STRING*25,INIFileName);
     PCHAR pKeys = szKeys;
     while (pKeys[0]!=0) {

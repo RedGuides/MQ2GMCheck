@@ -51,8 +51,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 5,4
- PRODUCTVERSION 5,4
+ FILEVERSION 5,5
+ PRODUCTVERSION 5,5
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -73,11 +73,11 @@ BEGIN
 #else
             VALUE "FileDescription", "MQ2GMCheck Release Version"
 #endif
-            VALUE "FileVersion", "5.4"
+            VALUE "FileVersion", "5.5"
             VALUE "InternalName", "MQ2GMCheck.dll"
             VALUE "OriginalFilename", "MQ2GMCheck.dll"
             VALUE "ProductName", "MQ2GMCheck"
-            VALUE "ProductVersion", "5.4"
+            VALUE "ProductVersion", "5.5"
         END
     END
     BLOCK "VarFileInfo"

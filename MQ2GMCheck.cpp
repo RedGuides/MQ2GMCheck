@@ -21,7 +21,7 @@
 #include <mq/imgui/ImGuiUtils.h>
 
 PreSetup("MQ2GMCheck");
-PLUGIN_VERSION(5.4);
+PLUGIN_VERSION(5.5);
 
 constexpr const char* PluginMsg = "\ay[\aoMQ2GMCheck\ax] ";
 
@@ -35,6 +35,19 @@ bool bGMCmdActive = false;
 bool bVolSet = false;
 
 enum FlagOptions { Off, On, Toggle };
+
+template <size_t BUFFER_SIZE = MAX_STRING>
+std::string DisplayDT(const std::string& Format)
+{
+	char CurrentDT[MAX_STRING] = { 0 };
+	struct tm currentDT;
+	time_t long_dt;
+	CurrentDT[0] = 0;
+	time(&long_dt);
+	localtime_s(&currentDT, &long_dt);
+	strftime(CurrentDT, MAX_STRING, Format.c_str(), &currentDT);
+	return(std::string(CurrentDT));
+}
 
 enum class GMStatuses
 {
@@ -76,7 +89,6 @@ public:
 
 static void DoGMAlert(const char* gm_name, GMStatuses status, bool test = false);
 static void TrackGMs(const char* GMName);
-static const char* DisplayDT(const char* Format);
 
 class BooleanOption
 {
@@ -452,7 +464,7 @@ void GMTrack::AddGM(const char* gm_name)
 	LastGMDate = DisplayDT("%m-%d-%y");
 	LastGMZone = "UNKNOWN";
 	const int zoneid = pLocalPC->get_zoneId();
-	if (zoneid <= MAX_ZONES)
+	if (zoneid < MAX_ZONES)
 	{
 		LastGMZone = pWorldData->ZoneArray[zoneid]->LongName;
 	}
@@ -918,18 +930,6 @@ static void PlayGMSound(const std::filesystem::path& sound_file)
 	StopSoundTimer = MQGetTickCount64() + 1000;
 }
 
-static const char* DisplayDT(const char* Format)
-{
-	static char CurrentDT[MAX_STRING] = { 0 };
-	struct tm currentDT;
-	time_t long_dt;
-	CurrentDT[0] = 0;
-	time(&long_dt);
-	localtime_s(&currentDT, &long_dt);
-	strftime(CurrentDT, MAX_STRING - 1, Format, &currentDT);
-	return(CurrentDT);
-}
-
 static void GMReminder(char* szLine)
 {
 	char Interval[MAX_STRING];
@@ -971,7 +971,7 @@ static void TrackGMs(const char* GMName)
 	int iCount = 0;
 	char szTime[MAX_STRING] = { 0 };
 
-	sprintf_s(szTime, "Date: %s Time: %s", DisplayDT("%m-%d-%y"), DisplayDT("%I:%M:%S %p"));
+	sprintf_s(szTime, "Date: %s Time: %s", DisplayDT("%m-%d-%y").c_str(), DisplayDT("%I:%M:%S %p").c_str());
 
 	// Store total GM count regardless of server
 	strcpy_s(szSection, "GM");
@@ -1008,12 +1008,12 @@ static void DoGMAlert(const char* gm_name, GMStatuses status, bool test)
 	switch(status)
 	{
 	case GMStatuses::Enter:
-		sprintf_s(szMsg, "\arGM %s \ayhas entered the zone at \ar%s", gm_name, DisplayDT("%I:%M:%S %p"));
+		sprintf_s(szMsg, "\arGM %s \ayhas entered the zone at \ar%s", gm_name, DisplayDT("%I:%M:%S %p").c_str());
 		sound_to_play = s_settings.Sound_GMEnter;
 		beep_sound = "SystemAsterisk";
 		break;
 	case GMStatuses::Leave:
-		sprintf_s(szMsg, "\agGM %s \ayhas left the zone (or gone GM Invis) at \ag%s", gm_name, DisplayDT("%I:%M:%S %p"));
+		sprintf_s(szMsg, "\agGM %s \ayhas left the zone (or gone GM Invis) at \ag%s", gm_name, DisplayDT("%I:%M:%S %p").c_str());
 		sound_to_play = s_settings.Sound_GMLeave;
 		overlay_color = CONCOLOR_GREEN;
 		break;

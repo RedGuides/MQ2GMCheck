@@ -141,7 +141,7 @@ public:
 	static constexpr inline FlagOptions default_GMChatAlertEnabled = FlagOptions::On;
 	static constexpr inline FlagOptions default_ExcludeZonesEnabled = FlagOptions::Off;
 	static constexpr inline int default_ReminderInterval = 30;
-	static constexpr inline char* default_ExcludeZones = "nexus|poknowledge";
+	static constexpr inline const char* default_ExcludeZones = "nexus|poknowledge";
 
 	std::string szGMEnterCmd = std::string();
 	std::string szGMEnterCmdIf = std::string();
@@ -446,7 +446,7 @@ bool GMTrack::AlertPending()
 
 uint32_t GMTrack::GMCount() const
 {
-	return GMNames.size();
+	return (uint32_t)GMNames.size();
 }
 
 void GMTrack::AddGM(const char* gm_name)

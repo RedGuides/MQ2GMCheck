@@ -10,9 +10,9 @@ Shows if there is a GM in the zone who wants to make themselves known.
 
 ## Forms
 <!--tlo-forms-start-->
-### {{ renderMember(type='GMCheck', name='GMCheck') }}
-
-:   Returns TRUE if a detectable GM is in the zone, FALSE if not, or DISABLED if /gmcheck off.
+/// member | GMCheck GMCheck
+Returns TRUE if a detectable GM is in the zone, FALSE if not, or DISABLED if /gmcheck off.
+///
 
 <!--tlo-forms-end-->
 

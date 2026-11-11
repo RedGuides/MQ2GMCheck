@@ -10,13 +10,13 @@ Shows if a GM is in the zone, and how many are in the zone.
 
 ## Members
 <!--dt-members-start-->
-### {{ renderMember(type='string', name='Status') }}
+/// member | string Status
+Returns TRUE if a detectable GM is in the zone, FALSE if not, or DISABLED if /gmcheck off.
+///
 
-:   Returns TRUE if a detectable GM is in the zone, FALSE if not, or DISABLED if /gmcheck off.
-
-### {{ renderMember(type='string', name='Count') }}
-
-:   How many GMs are in the zone. Oddly this is a string!
+/// member | string Count
+How many GMs are in the zone. Oddly this is a string!
+///
 
 <!--dt-members-end-->
 
